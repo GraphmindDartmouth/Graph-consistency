@@ -228,12 +228,9 @@ def train_model_dist(model_name,dataset,dataloaders,config,patience=100,
     optimizer = torch.optim.AdamW(model.parameters(), lr=config['learning_rate'], weight_decay=config['weight_decay'],betas=(0.9, 0.999))
     early_stopper = EarlyStopper(patience=patience, min_delta=min_delta,file_path=model_saved_path,saved=save_model)
 
-    time_record = []
     for epoch in range(0, epoch):
         print(f'{model_name}, {dataset.name}')
-        # start_time = time.time()
         train(model,train_loader,optimizer,device,task_type)
-        # time_record.append(time.time()-start_time)
         
         # train_acc, train_loss, train_dist_loss = test(model,train_loader,device,evaluator,task_type)
         train_acc=0
@@ -255,7 +252,6 @@ def train_model_dist(model_name,dataset,dataloaders,config,patience=100,
 
         print(f'Epoch: {epoch:03d}, Train Acc: {train_acc:.4f}, Train Loss:{train_loss:.4f}, Test Acc: {test_acc:.4f}', "Test_dist_loss: ",test_dist_loss,"Validation Loss: ",validation_loss,"acc_early_stop: ",early_stopper.test_acc_record)
     print("Early stopping at Epoch: %d, Test Acc: %f"%(early_stopper.epoch_counter, early_stopper.test_acc_record))
-    np.save(os.path.join('time_record', f'{model_name}_{dataset.name}_dist.npy'), np.array(time_record))
     
     with open(f"record/{model_name}_{config['reg_term']}.txt", 'a+') as file:
         file.write(f"{early_stopper.test_acc_record}\n")

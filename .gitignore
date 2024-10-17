@@ -4,12 +4,10 @@
 /wandb
 /model
 /dataset
-/config
-/rank_config
-/dist_model
 /datasplit
 /record
 /similarity
+/distmodel
 *pt
 *pkl
 *.npy
