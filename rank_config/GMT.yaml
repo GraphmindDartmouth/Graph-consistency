@@ -1,0 +1,137 @@
+IMDB-BINARY:
+  k: 10
+  heads: 1
+  epochs: 100
+  dropout: 0.5
+  reg_term: 0.1
+  batch_size: 128
+  num_layers: 3
+  hidden_size: 128
+  weight_decay: 0.0001
+  learning_rate: 0.0005
+PROTEINS:
+  k: 10
+  heads: 2
+  epochs: 100
+  dropout: 0.5
+  reg_term: 0.1
+  batch_size: 128
+  num_layers: 3
+  hidden_size: 128
+  weight_decay: 0.0001
+  learning_rate: 0.0005
+ogbg-molhiv:
+  k: 10
+  heads: 4
+  epochs: 200
+  dropout: 0.5
+  reg_term: 0.1
+  batch_size: 256
+  num_layers: 3
+  hidden_size: 128
+  weight_decay: 0.0001
+  learning_rate: 0.001
+COLLAB:
+  k: 10
+  heads: 2
+  epochs: 100
+  dropout: 0.5
+  reg_term: 0.1
+  batch_size: 128
+  num_layers: 3
+  hidden_size: 128
+  weight_decay: 0.0001
+  learning_rate: 0.0005
+DD:
+  k: 10
+  heads: 4
+  epochs: 100
+  dropout: 0.5
+  reg_term: 0.1
+  batch_size: 10
+  num_layers: 3
+  hidden_size: 32
+  weight_decay: 0.0001
+  learning_rate: 0.0005
+NCI109:
+  k: 10
+  heads: 1
+  epochs: 100
+  dropout: 0.5
+  reg_term: 0.1
+  batch_size: 32
+  num_layers: 3
+  hidden_size: 128
+  weight_decay: 0.0001
+  learning_rate: 0.0005
+NCI1:
+  k: 10
+  heads: 4
+  epochs: 100
+  dropout: 1
+  reg_term: 0.1
+  batch_size: 64
+  num_layers: 3
+  hidden_size: 128
+  weight_decay: 0.0001
+  learning_rate: 0.0005
+
+REDDIT-MULTI-5K:
+  k: 10
+  heads: 4
+  epochs: 100
+  dropout: 1
+  reg_term: 0.1
+  batch_size: 64
+  num_layers: 3
+  hidden_size: 128
+  weight_decay: 0.0001
+  learning_rate: 0.0005
+
+reddit_threads:
+  learning_rate: 0.001
+  k: 10
+  heads: 8 
+  epochs: 75
+  dropout: 0
+  num_layers: 3
+  batch_size: 128
+  hidden_size: 32
+  weight_decay: 0.001
+  reg_term: 0.01
+
+IMDB-MULTI:
+  learning_rate: 0.001
+  epochs: 100
+  dropout: 0
+  num_layers: 3
+  batch_size: 128
+  hidden_size: 32
+  weight_decay: 0.01
+  reg_term: 5 
+  heads: 8
+  k: 4
+
+Letter-high:
+  learning_rate: 0.001
+  epochs: 100
+  dropout: 0.3
+  num_layers: 3
+  batch_size: 128
+  hidden_size: 128 
+  weight_decay: 0.01
+  reg_term: 0.1
+  heads: 1
+  k: 10
+
+COIL-RAG:
+  learning_rate: 0.001
+  epochs: 100
+  dropout: 0.3
+  num_layers: 3
+  batch_size: 64  
+  hidden_size: 128
+  weight_decay: 0.001
+  heads: 8
+  k: 6
+  reg_term: 0.1

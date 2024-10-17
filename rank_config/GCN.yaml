@@ -1,0 +1,128 @@
+ogbg-molhiv:
+  epochs: 200
+  dropout: 0.6
+  reg_term: 0.1
+  batch_size: 256
+  num_layers: 4
+  hidden_size: 32
+  weight_decay: 0.005
+  learning_rate: 0.002
+PROTEINS:
+  learning_rate: 0.005
+  epochs: 300
+  dropout: 0.3
+  reg_term: 0.5
+  num_layers: 4
+  batch_size: 32
+  hidden_size: 32
+  weight_decay: 0.0001
+
+NCI1:
+  learning_rate: 0.002
+  epochs: 500
+  dropout: 0
+  reg_term: 0.1
+  num_layers: 3
+  batch_size: 128
+  hidden_size: 64
+  weight_decay: 0.001
+
+NCI109:
+  learning_rate: 0.0001
+  epochs: 300
+  dropout: 0
+  reg_term: 0.5
+  num_layers: 3
+  batch_size: 64
+  hidden_size: 32
+  weight_decay: 0.01
+
+IMDB-BINARY:
+  learning_rate: 0.0001
+  epochs: 300
+  dropout: 0
+  num_layers: 3
+  reg_term: 1
+  batch_size: 64
+  hidden_size: 32
+  weight_decay: 0
+
+COLLAB:
+  learning_rate: 0.0001
+  epochs: 300
+  dropout: 0.5
+  reg_term: 0.5
+  num_layers: 4
+  batch_size: 64
+  hidden_size: 128
+  weight_decay: 0.001
+
+DD:
+  learning_rate: 0.0005
+  epochs: 500
+  dropout: 0.6
+  reg_term: 0.1
+  num_layers: 4
+  batch_size: 32
+  hidden_size: 32
+  weight_decay: 0.001
+
+REDDIT-MULTI-5K:
+  learning_rate: 0.001
+  epochs: 100
+  dropout: 0
+  num_layers: 3
+  batch_size: 128
+  hidden_size: 128
+  weight_decay: 0
+  reg_term: 0.1
+
+twitch_egos:
+  learning_rate: 0.0001
+  epochs: 100
+  dropout: 0
+  num_layers: 3
+  batch_size: 64
+  hidden_size: 32
+  weight_decay: 0.01
+  reg_term: 0.1
+
+reddit_threads:
+  learning_rate: 0.001
+  epochs: 75
+  dropout: 0
+  num_layers: 3
+  batch_size: 128
+  hidden_size: 32
+  weight_decay: 0.001
+  reg_term: 0.1
+
+IMDB-MULTI:
+  learning_rate: 0.001
+  epochs: 100
+  dropout: 0
+  num_layers: 3
+  batch_size: 128
+  hidden_size: 32
+  weight_decay: 0.001
+  reg_term: 0.01
+
+Letter-high:
+  learning_rate: 0.01
+  epochs: 100
+  dropout: 0
+  num_layers: 3
+  batch_size: 128
+  hidden_size: 32
+  weight_decay: 0.001
+  reg_term: 0.01
+
+COIL-RAG:
+  learning_rate: 0.01
+  epochs: 100
+  dropout: 0
+  num_layers: 3
+  batch_size: 64
+  hidden_size: 32
+  weight_decay: 0.01
+  reg_term: 1

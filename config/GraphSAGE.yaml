@@ -1,0 +1,116 @@
+ogbg-molhiv:
+  learning_rate: 0.004
+  epochs: 100
+  dropout: 0.3
+  num_layers: 3
+  batch_size: 128
+  hidden_size: 64
+  weight_decay: 0.001
+PROTEINS:
+  batch_size: 64
+  dropout: 0.6
+  epochs: 300
+  hidden_size: 32
+  learning_rate: 0.005
+  num_layers: 4
+  weight_decay: 0.0001
+
+NCI109:
+  batch_size: 64
+  dropout: 0.5
+  epochs: 500
+  hidden_size: 128
+  learning_rate: 0.001
+  num_layers: 4
+  weight_decay: 0.0005
+
+NCI1:
+  batch_size: 128
+  dropout: 0.6
+  epochs: 500
+  hidden_size: 128
+  learning_rate: 0.002
+  num_layers: 3
+  weight_decay: 0.0005
+
+IMDB-BINARY:
+  learning_rate: 0.0005
+  epochs: 500
+  dropout: 0.5
+  num_layers: 3
+  batch_size: 128
+  hidden_size: 128
+  weight_decay: 0.00
+
+COLLAB:
+  learning_rate: 0.0005
+  epochs: 300
+  dropout: 0.5
+  num_layers: 3
+  batch_size: 128
+  hidden_size: 64
+  weight_decay: 0.0005
+
+DD:
+  learning_rate: 0.01
+  epochs: 300
+  dropout: 0.3
+  num_layers: 3
+  batch_size: 64
+  hidden_size: 32
+  weight_decay: 0.001
+
+REDDIT-MULTI-5K:
+  learning_rate: 0.001
+  epochs: 100
+  dropout: 0
+  num_layers: 3
+  batch_size: 128
+  hidden_size: 128
+  weight_decay: 0
+
+twitch_egos:
+  learning_rate: 0.0001
+  epochs: 100
+  dropout: 0
+  num_layers: 3
+  batch_size: 128
+  hidden_size: 32
+  weight_decay: 0.001
+
+reddit_threads:
+  learning_rate: 0.01
+  epochs: 75
+  dropout: 0.3
+  num_layers: 3
+  batch_size: 128
+  hidden_size: 32
+  weight_decay: 0.001
+
+
+IMDB-MULTI:
+  learning_rate: 0.0001
+  epochs: 100
+  dropout: 0.3
+  num_layers: 3
+  batch_size: 32
+  hidden_size: 32
+  weight_decay: 0
+
+Letter-high:
+  learning_rate: 0.01
+  epochs: 100
+  dropout: 0.3
+  num_layers: 3
+  batch_size: 128
+  hidden_size: 32
+  weight_decay: 0.001
+
+COIL-RAG:
+  learning_rate: 0.01
+  epochs: 100
+  dropout: 0.3
+  num_layers: 3
+  batch_size: 128
+  hidden_size: 32
+  weight_decay: 0.01

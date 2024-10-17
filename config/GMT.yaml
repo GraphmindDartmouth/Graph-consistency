@@ -1,0 +1,127 @@
+IMDB-BINARY:
+  batch_size: 128
+  heads: 1
+  hidden_size: 128
+  epochs: 100
+  learning_rate: 0.005
+  dropout: 0.5
+  num_layers: 3
+  weight_decay: 0.0001
+  k: 10
+COLLAB:
+  batch_size: 128
+  heads: 2
+  hidden_size: 128
+  epochs: 100
+  learning_rate: 0.005
+  dropout: 0.5
+  num_layers: 3
+  weight_decay: 0.0001
+  k: 10
+DD:
+  batch_size: 10
+  heads: 4
+  hidden_size: 32
+  epochs: 100
+  learning_rate: 0.005
+  dropout: 0.5
+  num_layers: 3
+  weight_decay: 0.0001
+  k: 10
+NCI109:
+  batch_size: 32
+  heads: 1
+  hidden_size: 128
+  epochs: 100
+  learning_rate: 0.005
+  dropout: 0.5
+  num_layers: 3
+  weight_decay: 0.0001
+  k: 10
+NCI1:
+  batch_size: 64
+  heads: 4
+  hidden_size: 128
+  epochs: 100
+  learning_rate: 0.005
+  dropout: 0.5
+  num_layers: 3
+  weight_decay: 0.0001
+  k: 10
+ogbg-molhiv:
+  batch_size: 256
+  heads: 2
+  hidden_size: 128
+  epochs: 150
+  learning_rate: 0.001
+  dropout: 0.5
+  num_layers: 3
+  weight_decay: 0.0001
+  k: 10
+PROTEINS:
+  batch_size: 128
+  heads: 2
+  hidden_size: 128
+  epochs: 100
+  learning_rate: 0.005
+  dropout: 0.5
+  num_layers: 3
+  weight_decay: 0.0001
+  k: 10
+
+REDDIT-MULTI-5K:
+  batch_size: 32
+  heads: 2
+  hidden_size: 64
+  epochs: 100
+  learning_rate: 0.001
+  dropout: 0.3
+  num_layers: 3
+  weight_decay: 0.01
+  k: 10
+
+reddit_threads:
+  batch_size: 128
+  heads: 8
+  hidden_size: 32
+  epochs: 75
+  learning_rate: 0.001
+  dropout: 0.3
+  num_layers: 3
+  weight_decay: 0.001
+  k: 10
+
+
+IMDB-MULTI:
+  learning_rate: 0.0001
+  epochs: 100
+  dropout: 0.3
+  num_layers: 3
+  batch_size: 64
+  hidden_size: 64
+  weight_decay: 0.01
+  heads: 2
+  k: 2
+
+Letter-high:
+  learning_rate: 0.001
+  epochs: 100
+  dropout: 0.3
+  num_layers: 3
+  batch_size: 32
+  hidden_size: 128
+  weight_decay: 0
+  heads: 1
+  k: 10
+
+
+COIL-RAG:
+  learning_rate: 0.001
+  epochs: 100
+  dropout: 0.3
+  num_layers: 3
+  batch_size: 128
+  hidden_size: 128
+  weight_decay: 0.01
+  heads: 8
+  k: 6
