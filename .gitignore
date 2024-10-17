@@ -2,16 +2,8 @@
 /Data
 /__pycache__
 /wandb
-/kgnn_module/examples/*
 /model
 /dataset
-/output
-/train.sh
-/model_test.sh
-/train.sh
-/logs
-/xuyuan.code-workspace
-/xuyuan.workspace.code-workspace
 /config
 /rank_config
 /dist_model
@@ -22,6 +14,5 @@
 *pkl
 *.npy
 *.yaml
-/gcn_lib
 *.csv
 *.zip
