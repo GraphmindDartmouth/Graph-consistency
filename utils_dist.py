@@ -7,7 +7,7 @@ reg_criterion = torch.nn.MSELoss
 multicls_criterion = torch.nn.CrossEntropyLoss
 
 
-def loss(pred, y, pooled_outputs, task_type=None, loss_module=None, alpha=None):
+def loss(self, pred, y, pooled_outputs, task_type=None):
     # classification_loss = F.cross_entropy(pred, y)
     classification_loss = None
     if task_type is None:
@@ -24,21 +24,20 @@ def loss(pred, y, pooled_outputs, task_type=None, loss_module=None, alpha=None):
         classification_loss = multicls_criterion()(pred[is_labeled], y[is_labeled])    
     else:
         raise 
-    middle_loss = compute_middle_loss(pooled_outputs, loss_module)
+    middle_loss = compute_middle_loss(pooled_outputs, self.loss_module)
 
 
     # Total loss is the sum of classification loss and the regularization term
-    total_loss = classification_loss + alpha * middle_loss
+    total_loss = classification_loss + self.reg_term * middle_loss
     return total_loss, middle_loss
 
 
 def model_decorator(model, reg_term, loss_func):
-    model.reg_term=reg_term,
+    model.reg_term=reg_term
     model.loss_module=loss_func
     
     assert not hasattr(model, 'loss'), 'Method Conflict!'
-    model.loss = MethodType(model, loss)
-
+    model.loss = MethodType(loss, model)
 
 
 def compute_middle_loss(pooled_outputs, loss_module):

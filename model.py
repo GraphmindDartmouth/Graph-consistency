@@ -186,7 +186,7 @@ class GIN(torch.nn.Module):
         return x
     
 class TransformerNet(torch.nn.Module):
-    def __init__(self, input_dim, hidden_dim, output_dim, num_layers, dropout, return_embeds=False):
+    def __init__(self, input_dim, hidden_dim, output_dim, num_layers, dropout, return_embeds=False, medium=False):
         super(TransformerNet, self).__init__()
         
         self.num_layers = num_layers
@@ -204,6 +204,7 @@ class TransformerNet(torch.nn.Module):
         self.lin2 = Linear(hidden_dim, output_dim)
         self.dropout = dropout
         self.return_embeds = return_embeds
+        self.medium = medium
 
     def reset_parameters(self):
         for conv in self.convs:
@@ -213,9 +214,13 @@ class TransformerNet(torch.nn.Module):
 
     def forward(self, data, edge_attr=None):
         x, edge_index, batch = data.x.to(dtype=torch.float), data.edge_index, data.batch
+        self.dist_matrix = []
         for conv in self.convs:
             x = conv(x, edge_index, edge_attr=edge_attr)
             x = F.relu(x)
+            x_embed=global_add_pool(x, batch)
+            if self.medium:
+                self.dist_matrix.append(x_embed)
 
         x = global_add_pool(x, batch)
         x = F.relu(self.lin1(x))
@@ -223,5 +228,7 @@ class TransformerNet(torch.nn.Module):
         x = self.lin2(x)
 
         # out = x if self.return_embeds else F.log_softmax(self.lin2(x), dim=-1)
+        if self.medium:
+            return x,self.dist_matrix
         return x
     

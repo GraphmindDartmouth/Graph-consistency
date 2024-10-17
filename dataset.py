@@ -14,11 +14,9 @@ from utils import *
 import pandas as pd 
 import json
 
-TUData=["PROTEINS","IMDB-BINARY","IMDB-MULTI","REDDIT-BINARY","COLLAB","COIL-RAG", "COIL-DEL",
-        "NCI1","NCI109","MUTAG","DD","PTC_MR","REDDIT-MULTI-5K",'ENZYME','Letter-high']
-OGB_Data=['ogbg-molhiv','ogbg-molpcba','ogbg-ppa','ogbg-code2']
-SNAP_Data = ['twitch_egos', 'reddit_threads']
-##zinc=[]
+TUData=["PROTEINS","IMDB-BINARY","IMDB-MULTI","COLLAB","NCI1","NCI109","COIL-RAG", "DD"]
+OGB_Data=["ogbg-molhiv"]
+SNAP_Data = ["reddit_threads"]
 
 
 def file_initialize():
@@ -158,6 +156,7 @@ class SNAP_dataset(InMemoryDataset):
             data = self.transform(data)
 
         return data
+
 
 
 def load_splited_dataset(folder):

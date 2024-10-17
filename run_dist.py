@@ -3,7 +3,7 @@ import yaml
 import wandb
 from dataset import load_dataset,TUData,OGB_Data
 from train_dist  import train_model_dist, data_loader
-from utils import seed_everything
+from utils import seed_everything, record_result
 import os
 import torch
 from ogb.graphproppred import Evaluator
@@ -12,10 +12,10 @@ parser = argparse.ArgumentParser(description='  ')
 
 parser.add_argument('--model', default='GCN', type=str,help='train the XX model')
 parser.add_argument('--dataset', default='PROTEINS', type=str,help='on which dataset')
-parser.add_argument('--gpu', required=False, default=3, type=int, help='Device Number' )
-parser.add_argument("--seed", type=int, default=1234, help="random seed (default: 1234)")
-parser.add_argument("--reg_term", type=float, default=0.1, help="random seed (default: 1234)")
-parser.add_argument("--repeat_time", type=int, default=10, help="random seed (default: 1234)")
+parser.add_argument('--device', required=False, default=3, type=int, help='Device Number' )
+parser.add_argument("--seed", type=int, default=1234)
+parser.add_argument("--reg_term", type=float, default=0.1)
+parser.add_argument("--repeat_time", type=int, default=10) 
 parser.add_argument("--wandb_record", action="store_true")
 args = parser.parse_args()
 
@@ -39,11 +39,11 @@ for key in config[args.dataset].keys():
     wandb_config[key] = config[args.dataset][key]
 
 
-#只在train的时候保存数据
 save_data=False
 
 if __name__ == '__main__':
     wandb_record = args.wandb_record
+    test_acc_list = []
     for item in range(args.repeat_time):
         project_name=args.model+'_'+args.dataset+"_reg_repeat"
 
@@ -60,11 +60,11 @@ if __name__ == '__main__':
             run = wandb.init(project=project_name,name="run"+str(item),config=wandb_config)
 
         if args.dataset in TUData:
-            model=train_model_dist(args.model,
+            test_acc_record=train_model_dist(args.model,
                             dataloaders=dataloaders,
                             dataset=dataset,
                             config=dict(wandb_config),
-                            device=args.gpu,
+                            device=args.device,
                             wandb_record=wandb_record,
                             save_model=True,
                             seed=args.seed,
@@ -73,18 +73,25 @@ if __name__ == '__main__':
                             )     
         
         else:
-            train_model_dist(args.model, 
+            test_acc_record=train_model_dist(args.model, 
                             dataset,
                             dataloaders=dataloaders,
                             config=dict(wandb_config),
-                            device=args.gpu,
+                            device=args.device,
                             wandb_record=wandb_record,
                             save_model=True,
                             seed=args.seed,
                             fromstore=False,
                             evaluator=Evaluator(args.dataset) if args.dataset in OGB_Data else None,
                             task_type=dataset.task_type if args.dataset in OGB_Data else None)
+        
+        test_acc_list.append(test_acc_record)
         wandb.finish()
-
+        
+    test_acc_list = torch.tensor(test_acc_list)
+    res = f'{test_acc_list.mean()*100:.2f}±{test_acc_list.std()*100:.2f}'
+    print(f'Model: {args.model}, Dataset: {args.dataset}, Performance: {res}') 
+    
+    record_result(args.model, args.dataset, f'{res}', root='./results_dist.csv')
     # with open(f'record/{args.model}_{args.reg_term}.txt', 'a+') as file:
     #     file.write(f"==============================================================\n")

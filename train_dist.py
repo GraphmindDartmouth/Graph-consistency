@@ -1,8 +1,7 @@
 #only experiment on graph classification tasks
 import torch
-from model_dist import GCN, GIN,GraphSAGE,TransformerNet
-# from model import GCN, GIN,GraphSAGE,TransformerNet
-from GMT_model.nets_dist import GraphMultisetTransformer, GraphMultisetTransformer_for_OGB
+from model import GCN, GIN,GraphSAGE,TransformerNet
+from GMT_model.nets import GraphMultisetTransformer, GraphMultisetTransformer_for_OGB
 from torch_geometric.loader import DataLoader
 import os
 from tqdm import tqdm
@@ -97,42 +96,26 @@ def get_model(model_name, dataset, device, config, loss_module="RankNetLoss"):
     elif loss_module == "RankNetLoss":
         loss_func=RankNetLoss().to(device)
         print("Using RankNetLoss")
-
+ 
     if model_name == 'GCN':
-        model = GCN(dataset.num_features,hidden_size,num_classes,num_layers=num_layers,dropout=dropout_ratio,reg_term=reg_term,loss_module=loss_func)
-    elif model_name == 'GIN':
-        model = GIN(dataset.num_features,hidden_size,num_classes,num_layers=num_layers,dropout=dropout_ratio,reg_term=reg_term,loss_module=loss_func)
+        model = GCN(dataset.num_features,hidden_size,num_classes,num_layers=num_layers,dropout=dropout_ratio,medium=True)
     elif model_name == 'GraphSAGE':
-        model = GraphSAGE(dataset.num_features,hidden_size,num_classes,num_layers=num_layers,dropout=dropout_ratio,reg_term=reg_term,loss_module=loss_func)
+        model = GraphSAGE(dataset.num_features,hidden_size,num_classes,num_layers=num_layers,dropout=dropout_ratio,medium=True)
+    elif model_name == 'GIN':
+        model = GIN(dataset.num_features,hidden_size,num_classes,num_layers=num_layers,dropout=dropout_ratio,medium=True)
     elif model_name == 'GTransformer':
-        model = TransformerNet(dataset.num_features,hidden_size,num_classes,num_layers=num_layers,dropout=dropout_ratio,reg_term=reg_term,loss_module=loss_func)
-    elif model_name == 'GMT':
+        model = TransformerNet(dataset.num_features,hidden_size,num_classes,num_layers=num_layers,dropout=dropout_ratio,medium=True)
+    elif model_name=='GMT':
         if (dataset.name in TUData) or (dataset.name in SNAP_Data):
-            model = GraphMultisetTransformer(dataset.num_features,hidden_size,num_classes,config['heads'],avg_num_nodes=np.ceil([np.mean([data.num_nodes for data in dataset])]),reg_term=reg_term,loss_module=loss_func)
+            model = GraphMultisetTransformer(dataset.num_features,hidden_size,num_classes,config['heads'],avg_num_nodes=np.ceil([np.mean([data.num_nodes for data in dataset])]),medium=True)
         elif dataset.name in OGB_Data:
-            model = GraphMultisetTransformer_for_OGB(dataset.num_features,hidden_size,num_classes,num_heads=config['heads'],avg_num_nodes=np.ceil([np.mean([data.num_nodes for data in dataset])]),reg_term=reg_term,loss_module=loss_func, edge_attr_dim=7)    
+            model = GraphMultisetTransformer_for_OGB(dataset.num_features,hidden_size,num_classes,num_heads=config['heads'],avg_num_nodes=np.ceil([np.mean([data.num_nodes for data in dataset])]), edge_attr_dim=7)
+        else:
+            raise ValueError("This Model is not implemented")    
     else:
         raise ValueError("This Model is not implemented")
-    
-    # if model_name == 'GCN':
-    #     model = GCN(dataset.num_features,hidden_size,num_classes,num_layers=num_layers,dropout=dropout_ratio,medium=True)
-    # elif model_name == 'GraphSAGE':
-    #     model = GraphSAGE(dataset.num_features,hidden_size,num_classes,num_layers=num_layers,dropout=dropout_ratio,medium=True)
-    # elif model_name == 'GIN':
-    #     model = GIN(dataset.num_features,hidden_size,num_classes,num_layers=num_layers,dropout=dropout_ratio,medium=True)
-    # elif model_name == 'GTransformer':
-    #     model = TransformerNet(dataset.num_features,hidden_size,num_classes,num_layers=num_layers,dropout=dropout_ratio,medium=True)
-    # elif model_name=='GMT':
-    #     if (dataset.name in TUData) or (dataset.name in SNAP_Data):
-    #         model = GraphMultisetTransformer(dataset.num_features,hidden_size,num_classes,config['heads'],avg_num_nodes=np.ceil([np.mean([data.num_nodes for data in dataset])]),medium=True)
-    #     elif dataset.name in OGB_Data:
-    #         model = GraphMultisetTransformer_for_OGB(dataset.num_features,hidden_size,num_classes,num_heads=config['heads'],avg_num_nodes=np.ceil([np.mean([data.num_nodes for data in dataset])]), edge_attr_dim=7)
-    #     else:
-    #         raise ValueError("This Model is not implemented")    
-    # else:
-    #     raise ValueError("This Model is not implemented")
 
-    # model_decorator(model, reg_term, loss_func)
+    model_decorator(model, reg_term, loss_func)
     print(model_name, " Training...")
     return model
 
@@ -150,7 +133,7 @@ def train(model, data_loader, optimizer, device, task_type):
         out, pooled_outputs = model(data)
 
 
-        sub_loss ,_ = model.loss(out, data.y, pooled_outputs, task_type)
+        sub_loss ,_ = model.loss(out, data.y, pooled_outputs=pooled_outputs, task_type=task_type)
         loss = loss + sub_loss
 
         loss.backward()
@@ -283,7 +266,7 @@ def train_model_dist(model_name,dataset,dataloaders,config,patience=100,
     if wandb_record:  
         wandb.log({"test_acc_of_early_stop": early_stopper.test_acc_record})
     
-
+    return early_stopper.test_acc_record
 
 def data_loader(dataset_name, dataset, batch_size):
     

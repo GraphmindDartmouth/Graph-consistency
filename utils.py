@@ -19,6 +19,7 @@ from torch_geometric.data import Data
 from grakel import GraphKernel, graph_from_networkx
 import torch.nn as nn
 from torch_scatter import scatter
+import pandas as pd 
 
 class EarlyStopper:
     def __init__(self, patience, min_delta,file_path,saved=False):
@@ -92,7 +93,29 @@ def get_node_number(dataset):
     max_num=max(max_num, 200)
     return max_num
 
-
+def record_result(model_name, dataset_name, res, root):
+    if not os.path.exists(root):
+        with open(root, 'w') as f:
+            res_df = pd.DataFrame(data={dataset_name: res}, index=[model_name])
+            res_df.to_csv(root)
+            return 
+    
+    res_df = pd.read_csv(root, index_col=0)
+    part_data = pd.DataFrame(data={dataset_name: res}, index=[model_name])
+    con1 = model_name in res_df.index
+    con2 = dataset_name in res_df.columns
+    print(con1, con2)
+    if con1 and con2:
+        res_df[dataset_name][model_name] = res
+    if con1 and not con2:
+        res_df = pd.concat([res_df, part_data], axis=1)
+    if not con1 and con2:
+        res_df = pd.concat([res_df, part_data], axis=0)
+    if not con1 and not con2:
+        res_df = pd.concat([res_df, part_data])
+        
+    res_df.to_csv(root)
+    
 def seed_everything(seed):
     os.environ['PYTHONHASHSEED'] = str(seed)
     random.seed(seed)
