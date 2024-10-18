@@ -12,7 +12,7 @@ from ogb.graphproppred import Evaluator
 parser = argparse.ArgumentParser(description='  ')
 
 parser.add_argument('--model', default='GMT', type=str)
-parser.add_argument('--dataset', default='reddit_threads', type=str,help='on which dataset')
+parser.add_argument('--dataset', default='ogbg-molhiv', type=str,help='on which dataset')
 parser.add_argument('--device', required=False, default=7, type=int, help='Device Number' )
 parser.add_argument("--seed", type=int, default=1234, help="random seed (default: 1234)")
 parser.add_argument("--repeat_time", type=int, default=10)

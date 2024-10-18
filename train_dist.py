@@ -109,7 +109,7 @@ def get_model(model_name, dataset, device, config, loss_module="RankNetLoss"):
         if (dataset.name in TUData) or (dataset.name in SNAP_Data):
             model = GraphMultisetTransformer(dataset.num_features,hidden_size,num_classes,config['heads'],avg_num_nodes=np.ceil([np.mean([data.num_nodes for data in dataset])]),medium=True)
         elif dataset.name in OGB_Data:
-            model = GraphMultisetTransformer_for_OGB(dataset.num_features,hidden_size,num_classes,num_heads=config['heads'],avg_num_nodes=np.ceil([np.mean([data.num_nodes for data in dataset])]), edge_attr_dim=7)
+            model = GraphMultisetTransformer_for_OGB(dataset.num_features,hidden_size,num_classes,num_heads=config['heads'],avg_num_nodes=np.ceil([np.mean([data.num_nodes for data in dataset])]), edge_attr_dim=7, medium=True)
         else:
             raise ValueError("This Model is not implemented")    
     else:

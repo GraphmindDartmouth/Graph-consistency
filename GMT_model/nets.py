@@ -174,14 +174,14 @@ class GraphMultisetTransformer(GraphRepresentation):
 
 class GraphMultisetTransformer_for_OGB(GraphMultisetTransformer):
 
-    def __init__(self, num_features, num_hidden, num_classes, num_heads, avg_num_nodes, edge_attr_dim):
+    def __init__(self, num_features, num_hidden, num_classes, num_heads, avg_num_nodes, edge_attr_dim, medium=False):
         self.edge_attr_dim = edge_attr_dim
         super(GraphMultisetTransformer_for_OGB, self).__init__(num_features, num_hidden, num_classes, num_heads,avg_num_nodes)
 
         self.atom_encoder = AtomEncoder(self.nhid)
         
         self.convs = self.get_convs()
-        
+        self.medium = medium
         
     def forward(self, data, return_medium=False):
 
@@ -226,7 +226,7 @@ class GraphMultisetTransformer_for_OGB(GraphMultisetTransformer):
 
         # For Classification
         x = self.classifier(x)
-        if return_medium:
+        if self.medium:
             return x, pooled_outputs
         else:
             return x

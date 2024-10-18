@@ -10,8 +10,8 @@ from ogb.graphproppred import Evaluator
 
 parser = argparse.ArgumentParser(description='  ')
 
-parser.add_argument('--model', default='GCN', type=str,help='train the XX model')
-parser.add_argument('--dataset', default='PROTEINS', type=str,help='on which dataset')
+parser.add_argument('--model', default='GMT', type=str,help='train the XX model')
+parser.add_argument('--dataset', default='ogbg-molhiv', type=str,help='on which dataset')
 parser.add_argument('--device', required=False, default=3, type=int, help='Device Number' )
 parser.add_argument("--seed", type=int, default=1234)
 parser.add_argument("--reg_term", type=float, default=0.1)
