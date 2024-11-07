@@ -13,7 +13,14 @@
 **Citation (bibtex)**:
 
 ```
-TODO
+@inproceedings{
+liu2024exploring,
+title={Exploring Consistency in Graph Representations: from Graph Kernels to Graph Neural Networks},
+author={Xuyuan Liu and Yinghao Cai and Qihui Yang and Yujun Yan},
+booktitle={The Thirty-eighth Annual Conference on Neural Information Processing Systems},
+year={2024},
+url={https://openreview.net/forum?id=dg0hO4M11K}
+}
 ```
 
 
