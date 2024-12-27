@@ -6,10 +6,9 @@ from tqdm import tqdm
 import os
 from utils import *
 from torch_geometric.data import InMemoryDataset, Data
-from ogb.graphproppred import GraphPropPredDataset
 from dataset_ogb import PygGraphPropPredDataset
 from torch_geometric import transforms as T
-from torch_geometric.utils import degree, to_dense_adj
+from torch_geometric.utils import degree
 from utils import *
 import pandas as pd 
 import json

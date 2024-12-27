@@ -5,20 +5,12 @@ import os
 import random
 from torch_geometric.utils import degree
 import torch_geometric.transforms as T
-from torch_geometric.datasets import TUDataset
-from torch_geometric.transforms import BaseTransform
-from torch_geometric.data import DataLoader, Data
 import networkx as nx
 import matplotlib.pyplot as plt
-from torch_geometric.utils import degree, to_undirected
-from torch_geometric.utils import dropout_adj
+from torch_geometric.utils import degree
 from utils import *
-from torch_geometric.utils import to_networkx,dropout_adj,dropout_edge
 from grakel import Graph
-from torch_geometric.data import Data
-from grakel import GraphKernel, graph_from_networkx
 import torch.nn as nn
-from torch_scatter import scatter
 import pandas as pd 
 
 class EarlyStopper:
@@ -69,29 +61,6 @@ class NormalizedDegree(object):
         data.x = deg.view(-1, 1)
         return data
 
-
-#tool function for PNA
-def get_histogram(dataset):
-    max_degree = -1
-    for data in dataset:
-        d = degree(data.edge_index[1], num_nodes=data.num_nodes, dtype=torch.long)
-        max_degree = max(max_degree, int(d.max()))
-
-# Compute the in-degree histogram tensor
-    deg = torch.zeros(max_degree + 1, dtype=torch.long)
-    for data in dataset:
-        d = degree(data.edge_index[1], num_nodes=data.num_nodes, dtype=torch.long)
-        deg += torch.bincount(d, minlength=deg.numel())
-    return deg
-#----------------------------------------------------------------
-
-def get_node_number(dataset):
-    max_num=-1
-    for data in dataset:
-       
-        max_num = data.num_nodes
-    max_num=max(max_num, 200)
-    return max_num
 
 def record_result(model_name, dataset_name, res, root):
     if not os.path.exists(root):
@@ -185,108 +154,6 @@ def pyg_to_grakel(pyg_data_list):
     
     return grakel_graphs
 
-
-def dist_compute(origin_data,data1,data2, model,device=None):
-    
-    origin_embed=model(origin_data.x,origin_data.edge_index,origin_data.batch)
-    embed1=model(data1.x,data1.edge_index,data1.batch)
-    embed2=model(data2.x,data2.edge_index,data2.batch)
-    dist1=distance_compute(origin_embed,embed1)
-    dist2=distance_compute(origin_embed,embed2)
-    return dist1,dist2
-
-def remove_edge_bernolli(data,dropout_ratio):
-    new_edge_index, _ = dropout_adj(data.edge_index, p=dropout_ratio, force_undirected=False)
-    data_dropout = data.clone()
-    data_dropout.edge_index = new_edge_index
-    return data_dropout
-
-
-def compute_pr(edge_index, damp: float = 0.85, k: int = 10):
-    num_nodes = edge_index.max().item() + 1
-    deg_out = degree(edge_index[0])
-    x = torch.ones((num_nodes, )).to(edge_index.device).to(torch.float32)
-
-    for i in range(k):
-        edge_msg = x[edge_index[0]] / deg_out[edge_index[0]]
-        agg_msg = scatter(edge_msg, edge_index[1], reduce='sum')
-
-        x = (1 - damp) * x + damp * agg_msg
-
-    return x
-
-def drop_edge_weighted(data, edge_weights, p: float, threshold: float = 1.):
-    # Scale edge weights and apply threshold
-    edge_weights = edge_weights / edge_weights.mean() * p # get the mean value of edge weights
-    edge_weights = edge_weights.where(edge_weights < threshold, torch.ones_like(edge_weights) * threshold)#
-    # For each edge weight, if it is less than the specified threshold, it remains unchanged. If it is greater than or equal to the threshold, 
-    #it is set to the threshold value. This prevents any edge weight from exceeding the threshold.
-
-    sel_mask = torch.bernoulli(1. - edge_weights).to(torch.bool)
-    new_edge_index = data.edge_index[:, sel_mask]
-    
-   
-    new_data = Data(x=data.x, edge_index=new_edge_index, y=data.y)
-    # edges with higher weights are more likely to be removed due to 
-    return new_data
-
-def degree_drop_weights(edge_index):
-    edge_index_ = to_undirected(edge_index)
-    deg = degree(edge_index_[1])
-    deg_col = deg[edge_index[1]].to(torch.float32)
-    s_col = torch.log(deg_col)
-    weights = (s_col.max() - s_col) / (s_col.max() - s_col.mean())
-
-    return weights
-
-
-def pr_drop_weights(edge_index, aggr: str = 'sink', k: int = 10):
-    pv = compute_pr(edge_index, k=k)
-    pv_row = pv[edge_index[0]].to(torch.float32)
-    pv_col = pv[edge_index[1]].to(torch.float32)
-    s_row = torch.log(pv_row)
-    s_col = torch.log(pv_col)
-    if aggr == 'sink':
-        s = s_col
-    elif aggr == 'source':
-        s = s_row
-    elif aggr == 'mean':
-        s = (s_col + s_row) * 0.5
-    else:
-        s = s_col
-    weights = (s.max() - s) / (s.max() - s.mean())
-
-    return weights
-
-
-def evc_drop_weights(data):
-    evc = eigenvector_centrality(data)
-    evc = evc.where(evc > 0, torch.zeros_like(evc))
-    evc = evc + 1e-8
-    s = evc.log()
-
-    edge_index = data.edge_index
-    s_row, s_col = s[edge_index[0]], s[edge_index[1]]
-    s = s_col
-
-    return (s.max() - s) / (s.max() - s.mean())
-def eigenvector_centrality(data):
-    graph = to_networkx(data)
-    x = nx.eigenvector_centrality_numpy(graph)
-    x = [x[i] for i in range(data.num_nodes)]
-    return torch.tensor(x, dtype=torch.float32).to(data.edge_index.device)
-
-def remove_weighted_edge(data,dropout_ratio, type="eigen"):
-    if type=="eigen":
-        drop_weights=evc_drop_weights(data)
-    elif type=="pr":
-        drop_weights = pr_drop_weights(data.edge_index, aggr='sink', k=200)
-    elif type=="degree":
-        drop_weights = degree_drop_weights(data.edge_index)
-    
-    data1= drop_edge_weighted(data, drop_weights, dropout_ratio)
-
-    return data1
 
 class RankNetLoss(nn.Module):
     """

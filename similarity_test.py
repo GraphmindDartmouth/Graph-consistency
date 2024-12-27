@@ -1,13 +1,9 @@
 from dataset import *
-from datetime import datetime
-from torch_geometric.utils import to_dense_adj
-from torch_geometric.data import Data,Dataset
 import torch
 import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
 from train import train_splits,validate_splits
-from perturbation import PertubateRandom
 
 def load_model(load_path):
     #print("Load model from: ",load_path)
@@ -88,9 +84,6 @@ def rankloss_consistency(dataset_list,model_list,type="rank"):
             print(f"Similarity on model {model} /dataset {datasetname} saved, type: {type}")
             print(np.mean(similarity_list))
 
-
-
-    
 
 if __name__=="__main__":
     dataset_list=["DD"]

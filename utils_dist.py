@@ -68,10 +68,3 @@ def compute_cosine_similarity(graph_representation):
     
     return cosine_sim_matrix
 
-def compute_euclidean_distances(node_features, batch_indices):
-
-    graph_representation = global_add_pool(node_features, batch_indices)
-    pairwise_distances = torch.cdist(graph_representation, graph_representation)
-    mask= torch.ones((pairwise_distances.shape[0],pairwise_distances.shape[0]),device=pairwise_distances.device)-torch.eye(pairwise_distances.shape[0],device=pairwise_distances.device).to(pairwise_distances.device)
-    pairwise_distances=pairwise_distances*mask
-    return pairwise_distances

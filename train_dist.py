@@ -6,12 +6,9 @@ from torch_geometric.loader import DataLoader
 import os
 from tqdm import tqdm
 import torch.nn as nn
-from utils import EarlyStopper,get_histogram,get_node_number
+from utils import EarlyStopper
 import wandb
-from torch_geometric.nn import global_mean_pool, global_max_pool,global_add_pool
-import ot  
 import torch.nn.functional as F
-import time
 import numpy as np
 from utils_dist import *
 import torch._dynamo
@@ -21,21 +18,6 @@ TUData=["PROTEINS","IMDB-BINARY","IMDB-MULTI","COLLAB","NCI1","NCI109","COIL-RAG
 OGB_Data=["ogbg-molhiv"]
 SNAP_Data = ["reddit_threads"]
 
-
-class PositiveDifferenceLoss(nn.Module):
-    """
-    A custom PyTorch module that computes the loss based on the positive differences
-    between two similarity matrices.
-    """
-    def __init__(self):
-        super(PositiveDifferenceLoss, self).__init__()
-
-    @torch.compile
-    def forward(self, previous_similarity, current_similarity):
-        matrix_diff = current_similarity - previous_similarity
-        positive_diff = torch.where(matrix_diff > 0, matrix_diff, torch.zeros_like(matrix_diff))
-        loss_component = torch.norm(positive_diff, p=1) / (2)
-        return loss_component
     
 
 class RankNetLoss(nn.Module):
@@ -90,10 +72,7 @@ def get_model(model_name, dataset, device, config, loss_module="RankNetLoss"):
     reg_term=config['reg_term']
     num_classes = dataset.num_classes if dataset.name != 'ogbg-ppa' else len(torch.unique(dataset.y))
     
-    if loss_module == "PositiveDifferenceLoss":
-        loss_func=PositiveDifferenceLoss().to(device)
-        print("Using PositiveDifferenceLoss")
-    elif loss_module == "RankNetLoss":
+    if loss_module == "RankNetLoss":
         loss_func=RankNetLoss().to(device)
         print("Using RankNetLoss")
  
@@ -296,40 +275,3 @@ def data_loader(dataset_name, dataset, batch_size):
         print("Error")
         raise Exception("Error in load_dataset")
 
-
-def compute_wasserstein_distances(node_features, batch_indices):
-    
-    unique_graphs = batch_indices.unique()
-    num_graphs = len(unique_graphs)
-    distances = torch.zeros((num_graphs, num_graphs))
-
-    for i, graph_id_i in tqdm(enumerate(unique_graphs)):
-        for j, graph_id_j in enumerate(unique_graphs):
-            if i >= j:  # Compute distance only for one direction (i, j) where i < j, since the matrix is symmetric
-                continue
-
-            # Extract node features for the two graphs
-            indices_i = (batch_indices == graph_id_i).nonzero().squeeze()
-            features_i = node_features[indices_i]
-
-            indices_j = (batch_indices == graph_id_j).nonzero().squeeze()
-            features_j = node_features[indices_j]
-
-            # Compute pairwise distances between nodes of the two graphs
-            pairwise_distances = ot.dist(features_i, features_j, metric='euclidean')
-
-            # # Assuming uniform distribution over nodes for simplicity
-            # dist_i = np.ones(len(indices_i)) / len(indices_i)
-            # dist_j = np.ones(len(indices_j)) / len(indices_j)
-            # dist_i=torch.tensor(dist_i).to(features_i.device)
-            # dist_j=torch.tensor(dist_j).to(features_i.device)
-
-            dist_i=torch.ones(len(indices_i),device=features_i.device)/len(indices_i)
-            dist_j=torch.ones(len(indices_j),device=features_i.device)/len(indices_j)
-            
-            wasserstein_distance = ot.emd2(dist_i, dist_j, pairwise_distances)
-
-            distances[i, j] = wasserstein_distance
-            distances[j, i] = wasserstein_distance  # Fill in the symmetric value
-
-    return distances

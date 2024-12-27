@@ -3,9 +3,8 @@ import torch
 from model import *
 from torch_geometric.loader import DataLoader
 
-from tqdm import tqdm
 import torch.nn as nn
-from utils import EarlyStopper,get_histogram,get_node_number
+from utils import EarlyStopper
 import wandb
 import time
 

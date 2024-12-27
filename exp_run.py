@@ -39,7 +39,7 @@ for key in config[args.dataset].keys():
     wandb_config[key] = config[args.dataset][key]
 
 
-#只在train的时候保存数据
+#only save data split in training
 save_data=True
 
 if __name__ == '__main__':
